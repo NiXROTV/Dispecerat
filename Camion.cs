@@ -28,5 +28,4 @@ namespace Dispecerat
             StatusCurent = StatusCamion.InService;
         }
     }
-
 }
