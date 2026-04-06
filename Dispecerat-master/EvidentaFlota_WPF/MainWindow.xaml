@@ -1,0 +1,55 @@
+﻿<Window x:Class="EvidentaFlota_WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EvidentaFlota_WPF"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid Background="#F5F5F5">
+        <Border Background="White" 
+            CornerRadius="15" 
+            Padding="20" 
+            Margin="30" 
+            VerticalAlignment="Center" 
+            HorizontalAlignment="Center"
+            MaxWidth="350">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" Direction="270" Opacity="0.2" ShadowDepth="3"/>
+            </Border.Effect>
+
+            <StackPanel>
+                <TextBlock Text="Management Flotă" 
+                       FontSize="22" 
+                       FontWeight="Bold" 
+                       Foreground="#2C3E50" 
+                       HorizontalAlignment="Center" 
+                       Margin="0,0,0,15"/>
+
+                <Separator Margin="0,0,0,15" Background="#ECF0F1"/>
+
+                <TextBlock x:Name="lblDetalii" 
+                       Text="Așteptare date..." 
+                       FontSize="14" 
+                       LineHeight="22"
+                       Foreground="#7F8C8D" 
+                       TextWrapping="Wrap"/>
+
+                <Button Content="DESCARCĂ DATE CAMION" 
+                    Click="Button_Click" 
+                    Margin="0,20,0,0" 
+                    Padding="10" 
+                    Background="#3498DB" 
+                    Foreground="White" 
+                    FontWeight="Bold" 
+                    Cursor="Hand">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

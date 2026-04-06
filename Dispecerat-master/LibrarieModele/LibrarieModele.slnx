@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="../EvidentaFlota/EvidentaFlota.csproj" />
+  <Project Path="../EvidentaFlota_WPF/EvidentaFlota_WPF.csproj" Id="1de6cbe8-bb20-47f5-af9e-2dde855d357e" />
   <Project Path="../NivelStocareDate/NivelStocareDate.csproj" />
   <Project Path="LibrarieModele.csproj" />
 </Solution>
