@@ -1,0 +1,208 @@
+<Window x:Class="EvidentaFlota_WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Management Camioane" Height="600" Width="800" MinWidth="600" MinHeight="500">
+    <Window.Resources>
+        <!-- BONUS: Stiluri comune definite aici -->
+        <Style TargetType="Label">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#34495E"/>
+            <Setter Property="Margin" Value="0,5,0,2"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="BorderBrush" Value="#BDC3C7"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Background" Value="#3498DB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="0,15,0,5"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#2980B9"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="GroupBox">
+            <Setter Property="Foreground" Value="#34495E"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0,5,0,10"/>
+            <Setter Property="BorderBrush" Value="#BDC3C7"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Background="#F5F5F5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 1. Meniu Personalizat -->
+        <Menu Grid.Row="0" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" Padding="5,2">
+            <MenuItem Header="_Aplicație">
+                <MenuItem Header="_Ieșire" Click="MenuItemIesire_Click"/>
+            </MenuItem>
+            <MenuItem Header="_Modificare">
+                <MenuItem Header="_Modifică Camion" Click="MenuItemModifica_Click"/>
+            </MenuItem>
+            <MenuItem Header="_Ajutor">
+                <MenuItem Header="_Despre" Click="MenuItemDespre_Click"/>
+            </MenuItem>
+        </Menu>
+
+        <TabControl x:Name="tabControlPrincipal" Grid.Row="1" Background="Transparent" BorderThickness="0" Margin="10">
+            <TabItem Header="Gestiune">
+                <!-- Reorganizarea modulelor folosind layout grid responsiv & stackpanel -->
+                <Grid Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5*"/> <!-- Formular zona -->
+                        <ColumnDefinition Width="20"/> <!-- Spațiu -->
+                        <ColumnDefinition Width="6*"/> <!-- Rezultate zona -->
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Formular Adaugare -->
+                    <Border Grid.Column="0" Background="White" CornerRadius="10" Padding="15">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="10" Direction="270" Opacity="0.1" ShadowDepth="2"/>
+                        </Border.Effect>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel>
+                                <TextBlock Text="Adăugare Camion" FontSize="18" FontWeight="Bold" Margin="0,0,0,15" Foreground="#2C3E50"/>
+                                
+                                <Label x:Name="lblNumar" Content="Număr Înmatriculare:"/>
+                                <TextBox x:Name="txtNumar"/>
+
+                                <Label x:Name="lblMarca" Content="Marcă:"/>
+                                <TextBox x:Name="txtMarca"/>
+
+                                <Label x:Name="lblCapacitate" Content="Capacitate (Tone):"/>
+                                <TextBox x:Name="txtCapacitate"/>
+                                
+                                <Label x:Name="lblTipCarburant" Content="Tip Carburant:"/>
+                                <ListBox x:Name="lstTipCarburant" Height="70" Margin="0,0,0,10">
+                                    <ListBoxItem Content="Motorină" IsSelected="True"/>
+                                    <ListBoxItem Content="Benzină"/>
+                                    <ListBoxItem Content="Electric"/>
+                                    <ListBoxItem Content="Hibrid"/>
+                                </ListBox>
+
+                                <Label x:Name="lblDataFabricatie" Content="Data Fabricație:"/>
+                                <DatePicker x:Name="dpDataFabricatie" Margin="0,0,0,10" SelectedDate="{x:Static sys:DateTime.Now}" xmlns:sys="clr-namespace:System;assembly=mscorlib"/>
+                                
+                                <!-- 2. Controls tip RadioButton pentru enumerare simpla -->
+                                <GroupBox Header="Status Curent">
+                                    <StackPanel Margin="5">
+                                        <RadioButton x:Name="rbDisponibil" Content="Disponibil" IsChecked="True" Margin="0,2"/>
+                                        <RadioButton x:Name="rbInCursa" Content="În Cursă" Margin="0,2"/>
+                                        <RadioButton x:Name="rbInService" Content="În Service" Margin="0,2"/>
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <!-- 2. Controls tip CheckBox pentru atribute compuse (Flags) -->
+                                <GroupBox Header="Dotări Opționale">
+                                    <StackPanel Margin="5">
+                                        <CheckBox x:Name="chkAer" Content="Aer Condiționat" Margin="0,2"/>
+                                        <CheckBox x:Name="chkNavigatie" Content="Navigație" Margin="0,2"/>
+                                        <CheckBox x:Name="chkFrig" Content="Sistem Frig" Margin="0,2"/>
+                                        <CheckBox x:Name="chkDormitor" Content="Dormitor" Margin="0,2"/>
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <TextBlock x:Name="lblMesaj" Foreground="Red" TextWrapping="Wrap" Margin="0,5,0,0" FontWeight="SemiBold"/>
+                                
+                                <Button Content="Adaugă Camion" Click="BtnAdauga_Click"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+
+                    <!-- Zona Cautare si Detalii -->
+                    <Border Grid.Column="2" Background="White" CornerRadius="10" Padding="15">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="10" Direction="270" Opacity="0.1" ShadowDepth="2"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="Căutare Camion (după Număr)" FontSize="18" FontWeight="Bold" Margin="0,0,0,15" Foreground="#2C3E50"/>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <!-- 3. Căutare a unei entitati -->
+                                <TextBox x:Name="txtCautare" Grid.Column="0" Margin="0" VerticalAlignment="Center"/>
+                                <Button Content="Caută" Click="BtnCauta_Click" Grid.Column="2" Margin="0" Width="90"/>
+                            </Grid>
+
+                            <Separator Margin="0,20,0,20" Background="#ECF0F1"/>
+
+                            <TextBlock Text="Rezultat Căutare:" FontWeight="Bold" Foreground="#34495E" Margin="0,0,0,10"/>
+                            <Border Background="#F9F9F9" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="5" Padding="10">
+                                <TextBlock x:Name="lblRezultatCautare" Text="Niciun rezultat căutat recent." TextWrapping="Wrap" Foreground="#7F8C8D" MinHeight="90"/>
+                            </Border>
+                            
+                            <Separator Margin="0,20,0,20" Background="#ECF0F1"/>
+                            
+                            <TextBlock Text="Ultima activitate (Adăugări recente):" FontWeight="Bold" Foreground="#34495E" Margin="0,0,0,10"/>
+                            <TextBlock x:Name="lblDetaliiAdaugare" Text="Nu există intrări adăugate încă." TextWrapping="Wrap" Foreground="#7F8C8D"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </TabItem>
+            
+            <TabItem Header="Modificare">
+                <Grid Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5*"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="6*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Border Grid.Column="0" Background="White" CornerRadius="10" Padding="15">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="10" Direction="270" Opacity="0.1" ShadowDepth="2"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="Selectează Camion" FontSize="18" FontWeight="Bold" Margin="0,0,0,15" Foreground="#2C3E50"/>
+                            <ComboBox x:Name="cmbCamioaneModificare" DisplayMemberPath="NumarInmatriculare" SelectionChanged="CmbCamioaneModificare_SelectionChanged" Margin="0,0,0,20"/>
+                            
+                            <Label Content="Marca:"/>
+                            <TextBox x:Name="txtModificaMarca"/>
+                            
+                            <Label Content="Capacitate (Tone):"/>
+                            <TextBox x:Name="txtModificaCapacitate"/>
+                            
+                            <Label Content="Dotări (Selecție multiplă):"/>
+                            <ListBox x:Name="lstModificaDotari" SelectionMode="Multiple" Height="100" Margin="0,0,0,10">
+                                <ListBoxItem Content="AerConditionat"/>
+                                <ListBoxItem Content="Navigatie"/>
+                                <ListBoxItem Content="SistemFrig"/>
+                                <ListBoxItem Content="Dormitor"/>
+                            </ListBox>
+
+                            <TextBlock x:Name="lblMesajModificare" Foreground="Green" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,5,0,0"/>
+                            
+                            <Button Content="Actualizează" Click="BtnActualizeaza_Click"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
