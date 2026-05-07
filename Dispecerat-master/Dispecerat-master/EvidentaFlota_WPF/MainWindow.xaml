@@ -1,28 +1,34 @@
 <Window x:Class="EvidentaFlota_WPF.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Management Camioane" Height="600" Width="800" MinWidth="600" MinHeight="500">
+        Title="Management Flotă" Height="680" Width="1000" MinWidth="750" MinHeight="520">
     <Window.Resources>
-        <!-- BONUS: Stiluri comune definite aici -->
         <Style TargetType="Label">
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Foreground" Value="#34495E"/>
-            <Setter Property="Margin" Value="0,5,0,2"/>
+            <Setter Property="Margin" Value="0,4,0,1"/>
         </Style>
         <Style TargetType="TextBox">
-            <Setter Property="Padding" Value="5"/>
-            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="Padding" Value="5,4"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
             <Setter Property="BorderBrush" Value="#BDC3C7"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Margin" Value="0,0,0,8"/>
+            <Setter Property="Padding" Value="4,3"/>
+        </Style>
+        <Style TargetType="DatePicker">
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
         <Style TargetType="Button">
-            <Setter Property="Height" Value="35"/>
+            <Setter Property="Height" Value="34"/>
             <Setter Property="Background" Value="#3498DB"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Margin" Value="0,15,0,5"/>
+            <Setter Property="Margin" Value="0,10,0,4"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -42,111 +48,345 @@
         <Style TargetType="GroupBox">
             <Setter Property="Foreground" Value="#34495E"/>
             <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Margin" Value="0,5,0,10"/>
+            <Setter Property="Margin" Value="0,4,0,8"/>
             <Setter Property="BorderBrush" Value="#BDC3C7"/>
+        </Style>
+        <Style TargetType="DataGrid">
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="SelectionMode" Value="Single"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#ECF0F1"/>
+            <Setter Property="RowBackground" Value="White"/>
+            <Setter Property="AlternatingRowBackground" Value="#F9F9F9"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="CanUserDeleteRows" Value="False"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
         </Style>
     </Window.Resources>
 
-    <Grid Background="#F5F5F5">
+    <Grid Background="#F0F2F5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- 1. Meniu Personalizat -->
-        <Menu Grid.Row="0" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" Padding="5,2">
+        <!-- ===== MENIU ===== -->
+        <Menu Grid.Row="0" Background="White" BorderBrush="#DDE1E7" BorderThickness="0,0,0,1" Padding="5,3">
             <MenuItem Header="_Aplicație">
                 <MenuItem Header="_Ieșire" Click="MenuItemIesire_Click"/>
+            </MenuItem>
+            <MenuItem Header="_Camioane">
+                <MenuItem Header="_Adăugare Camion" Click="MenuItemAdaugare_Click"/>
+                <MenuItem Header="_Modificare Camion" Click="MenuItemModifica_Click"/>
+            </MenuItem>
+            <MenuItem Header="_Șoferi">
+                <MenuItem Header="_Gestionare Șoferi" Click="MenuItemSoferi_Click"/>
             </MenuItem>
             <MenuItem Header="_Ajutor">
                 <MenuItem Header="_Despre" Click="MenuItemDespre_Click"/>
             </MenuItem>
         </Menu>
 
-        <!-- Reorganizarea modulelor folosind layout grid responsiv & stackpanel -->
-        <Grid Grid.Row="1" Margin="20">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="5*"/> <!-- Formular zona -->
-                <ColumnDefinition Width="20"/> <!-- Spațiu -->
-                <ColumnDefinition Width="6*"/> <!-- Rezultate zona -->
-            </Grid.ColumnDefinitions>
+        <!-- ===== ZONA CONTINUT ===== -->
+        <Grid Grid.Row="1" Margin="15">
 
-            <!-- Formular Adaugare -->
-            <Border Grid.Column="0" Background="White" CornerRadius="10" Padding="15">
-                <Border.Effect>
-                    <DropShadowEffect BlurRadius="10" Direction="270" Opacity="0.1" ShadowDepth="2"/>
-                </Border.Effect>
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <!-- ══════════════════════════════════════════════
+                 PANEL 1: ADĂUGARE CAMION + DATAGRID
+                 ══════════════════════════════════════════════ -->
+            <Grid x:Name="paneluAdaugare" Visibility="Visible">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="330" MinWidth="250"/>
+                    <ColumnDefinition Width="15"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Form adaugare -->
+                <Border Grid.Column="0" Background="White" CornerRadius="10" Padding="14">
+                    <Border.Effect><DropShadowEffect BlurRadius="8" Opacity="0.08" ShadowDepth="2"/></Border.Effect>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <TextBlock Text="Adăugare Camion" FontSize="17" FontWeight="Bold"
+                                       Foreground="#2C3E50" Margin="0,0,0,12"/>
+
+                            <Label x:Name="lblNumar" Content="Număr Înmatriculare:"/>
+                            <TextBox x:Name="txtNumar"/>
+
+                            <Label x:Name="lblMarca" Content="Marcă:"/>
+                            <TextBox x:Name="txtMarca"/>
+
+                            <Label x:Name="lblCapacitate" Content="Capacitate (Tone):"/>
+                            <TextBox x:Name="txtCapacitate"/>
+
+                            <Label Content="Data Înregistrării:"/>
+                            <DatePicker x:Name="dpDataInregistrarii"/>
+
+                            <!-- ListBox TipContract - valori predefinite, selectie unica -->
+                            <GroupBox Header="Tip Contract">
+                                <ListBox x:Name="lstTipContract" Height="65"
+                                         SelectionMode="Single" BorderThickness="0" Margin="4"/>
+                            </GroupBox>
+
+                            <GroupBox Header="Status Curent">
+                                <StackPanel Margin="4">
+                                    <RadioButton x:Name="rbDisponibil" Content="Disponibil" IsChecked="True" Margin="0,2"/>
+                                    <RadioButton x:Name="rbInCursa" Content="În Cursă" Margin="0,2"/>
+                                    <RadioButton x:Name="rbInService" Content="În Service" Margin="0,2"/>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <GroupBox Header="Dotări Opționale">
+                                <StackPanel Margin="4">
+                                    <CheckBox x:Name="chkAer" Content="Aer Condiționat" Margin="0,2"/>
+                                    <CheckBox x:Name="chkNavigatie" Content="Navigație" Margin="0,2"/>
+                                    <CheckBox x:Name="chkFrig" Content="Sistem Frig" Margin="0,2"/>
+                                    <CheckBox x:Name="chkDormitor" Content="Dormitor" Margin="0,2"/>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <TextBlock x:Name="lblMesaj" TextWrapping="Wrap"
+                                       Margin="0,4" FontWeight="SemiBold"/>
+                            <Button Content="➕  Adaugă Camion" Click="BtnAdauga_Click"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+
+                <!-- DataGrid camioane + binding pentru numar -->
+                <Border Grid.Column="2" Background="White" CornerRadius="10" Padding="14">
+                    <Border.Effect><DropShadowEffect BlurRadius="8" Opacity="0.08" ShadowDepth="2"/></Border.Effect>
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+                            <TextBlock Text="Listă Camioane" FontSize="17" FontWeight="Bold"
+                                       Foreground="#2C3E50" Margin="0,0,0,6"/>
+                            <!--
+                                BINDING ElementName: sursa este DataGrid-ul dgCamioane (alt control, NU model/view-model).
+                                Path=Items.Count navigheaza prin proprietatile controlului sursa.
+                                StringFormat aplica formatul textului afisat.
+                            -->
+                            <Label Content="{Binding ElementName=dgCamioane,
+                                                     Path=Items.Count,
+                                                     StringFormat='Număr camioane: {0}'}"
+                                   FontWeight="Bold" Foreground="#2980B9" Margin="0"/>
+                        </StackPanel>
+                        <DataGrid x:Name="dgCamioane" DockPanel.Dock="Top">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Nr. Înmatriculare" Binding="{Binding NumarInmatriculare}" Width="130"/>
+                                <DataGridTextColumn Header="Marcă" Binding="{Binding Marca}" Width="100"/>
+                                <DataGridTextColumn Header="Cap. (t)" Binding="{Binding CapacitateTone}" Width="65"/>
+                                <DataGridTextColumn Header="Status" Binding="{Binding StatusCurent}" Width="90"/>
+                                <DataGridTextColumn Header="Tip Contract" Binding="{Binding TipContract}" Width="90"/>
+                                <DataGridTextColumn Header="Data Înreg." Binding="{Binding DataInregistrarii, StringFormat=dd/MM/yyyy}" Width="85"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
+                </Border>
+            </Grid>
+
+            <!-- ══════════════════════════════════════════════
+                 PANEL 2: MODIFICARE CAMION cu TwoWay Binding
+                 ══════════════════════════════════════════════ -->
+            <Grid x:Name="panelModificare" Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="300" MinWidth="240"/>
+                    <ColumnDefinition Width="15"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Selectie camion -->
+                <Border Grid.Column="0" Background="White" CornerRadius="10" Padding="14">
+                    <Border.Effect><DropShadowEffect BlurRadius="8" Opacity="0.08" ShadowDepth="2"/></Border.Effect>
                     <StackPanel>
-                        <TextBlock Text="Adăugare Camion" FontSize="18" FontWeight="Bold" Margin="0,0,0,15" Foreground="#2C3E50"/>
-                        
-                        <Label x:Name="lblNumar" Content="Număr Înmatriculare:"/>
-                        <TextBox x:Name="txtNumar"/>
+                        <TextBlock Text="Modificare Camion" FontSize="17" FontWeight="Bold"
+                                   Foreground="#2C3E50" Margin="0,0,0,12"/>
+                        <Label Content="Selectează Camionul:"/>
+                        <!--
+                            ComboBox populat cu lista camioanelor.
+                            La selectie, DataContext-ul panoului din dreapta
+                            este setat pe obiectul Camion selectat.
+                        -->
+                        <ComboBox x:Name="cmbCamioane"
+                                  DisplayMemberPath="NumarInmatriculare"
+                                  SelectionChanged="CmbCamioane_SelectionChanged"/>
 
-                        <Label x:Name="lblMarca" Content="Marcă:"/>
-                        <TextBox x:Name="txtMarca"/>
+                        <TextBlock x:Name="lblMesajMod" TextWrapping="Wrap"
+                                   Margin="0,6" FontWeight="SemiBold"/>
 
-                        <Label x:Name="lblCapacitate" Content="Capacitate (Tone):"/>
-                        <TextBox x:Name="txtCapacitate"/>
-                        
-                        <!-- 2. Controls tip RadioButton pentru enumerare simpla -->
-                        <GroupBox Header="Status Curent">
-                            <StackPanel Margin="5">
-                                <RadioButton x:Name="rbDisponibil" Content="Disponibil" IsChecked="True" Margin="0,2"/>
-                                <RadioButton x:Name="rbInCursa" Content="În Cursă" Margin="0,2"/>
-                                <RadioButton x:Name="rbInService" Content="În Service" Margin="0,2"/>
-                            </StackPanel>
-                        </GroupBox>
-
-                        <!-- 2. Controls tip CheckBox pentru atribute compuse (Flags) -->
-                        <GroupBox Header="Dotări Opționale">
-                            <StackPanel Margin="5">
-                                <CheckBox x:Name="chkAer" Content="Aer Condiționat" Margin="0,2"/>
-                                <CheckBox x:Name="chkNavigatie" Content="Navigație" Margin="0,2"/>
-                                <CheckBox x:Name="chkFrig" Content="Sistem Frig" Margin="0,2"/>
-                                <CheckBox x:Name="chkDormitor" Content="Dormitor" Margin="0,2"/>
-                            </StackPanel>
-                        </GroupBox>
-
-                        <TextBlock x:Name="lblMesaj" Foreground="Red" TextWrapping="Wrap" Margin="0,5,0,0" FontWeight="SemiBold"/>
-                        
-                        <Button Content="Adaugă Camion" Click="BtnAdauga_Click"/>
+                        <Button Content="💾  Actualizează" Click="BtnActualizeaza_Click"
+                                Background="#27AE60"/>
+                        <Button Content="◀  Înapoi la Listă" Click="MenuItemAdaugare_Click"
+                                Background="#95A5A6" Margin="0,4"/>
                     </StackPanel>
-                </ScrollViewer>
-            </Border>
+                </Border>
 
-            <!-- Zona Cautare si Detalii -->
-            <Border Grid.Column="2" Background="White" CornerRadius="10" Padding="15">
-                <Border.Effect>
-                    <DropShadowEffect BlurRadius="10" Direction="270" Opacity="0.1" ShadowDepth="2"/>
-                </Border.Effect>
-                <StackPanel>
-                    <TextBlock Text="Căutare Camion (după Număr)" FontSize="18" FontWeight="Bold" Margin="0,0,0,15" Foreground="#2C3E50"/>
+                <!--
+                    Panoul de editare cu DataContext setat din code-behind
+                    pe camionul selectat. Toate binding-urile de mai jos
+                    sunt TwoWay — modificarile din UI actualizeaza direct
+                    proprietatile obiectului Camion (posibil datorita INotifyPropertyChanged).
+                -->
+                <Border x:Name="borderDetaliiMod" Grid.Column="2" Background="White"
+                        CornerRadius="10" Padding="14">
+                    <Border.Effect><DropShadowEffect BlurRadius="8" Opacity="0.08" ShadowDepth="2"/></Border.Effect>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <TextBlock Text="Câmpuri de Editat" FontSize="15" FontWeight="Bold"
+                                       Foreground="#2C3E50" Margin="0,0,0,10"/>
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="10"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <!-- 3. Căutare a unei entitati -->
-                        <TextBox x:Name="txtCautare" Grid.Column="0" Margin="0" VerticalAlignment="Center"/>
-                        <Button Content="Caută" Click="BtnCauta_Click" Grid.Column="2" Margin="0" Width="90"/>
-                    </Grid>
+                            <Label Content="Număr Înmatriculare (read-only):"/>
+                            <!-- Binding OneWay pentru afisare numar (nu se poate modifica) -->
+                            <TextBox Text="{Binding NumarInmatriculare, Mode=OneWay}"
+                                     IsReadOnly="True" Background="#ECF0F1"/>
 
-                    <Separator Margin="0,20,0,20" Background="#ECF0F1"/>
+                            <Label x:Name="lblModMarca" Content="Marcă:"/>
+                            <!--
+                                BINDING TwoWay: modificarile in TextBox actualizeaza
+                                imediat proprietatea Marca a obiectului Camion selectat.
+                                UpdateSourceTrigger=PropertyChanged — actualizare la fiecare tastare.
+                            -->
+                            <TextBox Text="{Binding Marca, Mode=TwoWay,
+                                                    UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <TextBlock Text="Rezultat Căutare:" FontWeight="Bold" Foreground="#34495E" Margin="0,0,0,10"/>
-                    <Border Background="#F9F9F9" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="5" Padding="10">
-                        <TextBlock x:Name="lblRezultatCautare" Text="Niciun rezultat căutat recent." TextWrapping="Wrap" Foreground="#7F8C8D" MinHeight="90"/>
-                    </Border>
-                    
-                    <Separator Margin="0,20,0,20" Background="#ECF0F1"/>
-                    
-                    <TextBlock Text="Ultima activitate (Adăugări recente):" FontWeight="Bold" Foreground="#34495E" Margin="0,0,0,10"/>
-                    <TextBlock x:Name="lblDetaliiAdaugare" Text="Nu există intrări adăugate încă." TextWrapping="Wrap" Foreground="#7F8C8D"/>
-                </StackPanel>
-            </Border>
+                            <Label x:Name="lblModCapacitate" Content="Capacitate (Tone):"/>
+                            <TextBox Text="{Binding CapacitateTone, Mode=TwoWay,
+                                                    UpdateSourceTrigger=PropertyChanged,
+                                                    StringFormat='{}{0:F2}'}"/>
+
+                            <Label Content="Data Înregistrării:"/>
+                            <!-- BINDING TwoWay pe DatePicker pentru DataInregistrarii -->
+                            <DatePicker SelectedDate="{Binding DataInregistrarii, Mode=TwoWay}"/>
+
+                            <!--
+                                BINDING TwoWay pe ComboBox pentru TipContract (FormaFinantare echivalent).
+                                ItemsSource setat din code-behind cu Camion.ValoriTipContract.
+                            -->
+                            <Label Content="Tip Contract:"/>
+                            <ComboBox x:Name="cmbModTipContract"
+                                      SelectedItem="{Binding TipContract, Mode=TwoWay}"/>
+
+                            <!--
+                                BINDING TwoWay pe ComboBox pentru StatusCurent (ProgramStudiu echivalent).
+                                ItemsSource setat din code-behind cu valorile enum-ului StatusCamion.
+                            -->
+                            <Label Content="Status Curent:"/>
+                            <ComboBox x:Name="cmbModStatus"
+                                      SelectedItem="{Binding StatusCurent, Mode=TwoWay}"/>
+
+                            <GroupBox Header="Dotări (selectie multiplă)">
+                                <ListBox x:Name="lstModDotari" SelectionMode="Multiple"
+                                         Height="95" BorderThickness="0" Margin="4">
+                                    <ListBoxItem Content="Aer Condiționat" Tag="AerConditionat"/>
+                                    <ListBoxItem Content="Navigație" Tag="Navigatie"/>
+                                    <ListBoxItem Content="Sistem Frig" Tag="SistemFrig"/>
+                                    <ListBoxItem Content="Dormitor" Tag="Dormitor"/>
+                                </ListBox>
+                            </GroupBox>
+
+                            <TextBlock Text="Ultima Actualizare:" FontWeight="Bold"
+                                       Foreground="#7F8C8D" Margin="0,4,0,2"/>
+                            <!-- Binding OneWay pentru afisare DataActualizarii -->
+                            <TextBlock Text="{Binding DataActualizarii,
+                                                      StringFormat='dd/MM/yyyy HH:mm',
+                                                      Mode=OneWay}"
+                                       Foreground="#7F8C8D"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+            </Grid>
+
+            <!-- ══════════════════════════════════════════════
+                 PANEL 3: CRUD ȘOFERI cu Binding (Temă acasă)
+                 ══════════════════════════════════════════════ -->
+            <Grid x:Name="panelSoferi" Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="310" MinWidth="240"/>
+                    <ColumnDefinition Width="15"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Form Sofer -->
+                <Border Grid.Column="0" Background="White" CornerRadius="10" Padding="14">
+                    <Border.Effect><DropShadowEffect BlurRadius="8" Opacity="0.08" ShadowDepth="2"/></Border.Effect>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <TextBlock Text="Gestionare Șoferi" FontSize="17" FontWeight="Bold"
+                                       Foreground="#2C3E50" Margin="0,0,0,12"/>
+
+                            <Label Content="ID Angajat:"/>
+                            <TextBox x:Name="txtSoferId"/>
+
+                            <Label x:Name="lblSoferNume" Content="Nume:"/>
+                            <TextBox x:Name="txtSoferNume"/>
+
+                            <Label x:Name="lblSoferPrenume" Content="Prenume:"/>
+                            <!--
+                                BINDING 1 (Sofer panel): TwoWay pe TextBox Prenume.
+                                DataContext setat pe soferul selectat din DataGrid.
+                            -->
+                            <TextBox x:Name="txtSoferPrenume"
+                                     Text="{Binding Prenume, Mode=TwoWay,
+                                                    UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <!--
+                                BINDING 2 (Sofer panel): TwoWay pe ComboBox StatusSofer.
+                                ItemsSource setat din code-behind cu enum-ul StatusSofer.
+                            -->
+                            <Label Content="Status:"/>
+                            <ComboBox x:Name="cmbSoferStatus"
+                                      SelectedItem="{Binding StatusCurent, Mode=TwoWay}"/>
+
+                            <GroupBox Header="Atestate">
+                                <StackPanel Margin="4">
+                                    <CheckBox x:Name="chkMarfaGen" Content="Marfă Generală" Margin="0,2"/>
+                                    <CheckBox x:Name="chkADR" Content="ADR" Margin="0,2"/>
+                                    <CheckBox x:Name="chkAgabaritic" Content="Agabaritic" Margin="0,2"/>
+                                    <CheckBox x:Name="chkFrigorific" Content="Frigorific" Margin="0,2"/>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <TextBlock x:Name="lblMesajSofer" TextWrapping="Wrap"
+                                       Margin="0,4" FontWeight="SemiBold"/>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/><ColumnDefinition Width="8"/><ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" Content="➕ Adaugă" Click="BtnAdaugaSofer_Click"/>
+                                <Button Grid.Column="2" Content="💾 Actualizează" Click="BtnActualizeazaSofer_Click"
+                                        Background="#27AE60"/>
+                            </Grid>
+                            <Button Content="🗑 Șterge Selectat" Click="BtnStergeSofer_Click"
+                                    Background="#E74C3C"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+
+                <!-- DataGrid Soferi -->
+                <Border Grid.Column="2" Background="White" CornerRadius="10" Padding="14">
+                    <Border.Effect><DropShadowEffect BlurRadius="8" Opacity="0.08" ShadowDepth="2"/></Border.Effect>
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+                            <TextBlock Text="Listă Șoferi" FontSize="17" FontWeight="Bold"
+                                       Foreground="#2C3E50" Margin="0,0,0,6"/>
+                            <!-- Binding ElementName pentru afisarea numarului de soferi -->
+                            <Label Content="{Binding ElementName=dgSoferi,
+                                                     Path=Items.Count,
+                                                     StringFormat='Număr șoferi: {0}'}"
+                                   FontWeight="Bold" Foreground="#8E44AD" Margin="0"/>
+                        </StackPanel>
+                        <DataGrid x:Name="dgSoferi" DockPanel.Dock="Top"
+                                  SelectionChanged="DgSoferi_SelectionChanged">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="ID" Binding="{Binding IdAngajat}" Width="70"/>
+                                <DataGridTextColumn Header="Nume" Binding="{Binding Nume}" Width="100"/>
+                                <DataGridTextColumn Header="Prenume" Binding="{Binding Prenume}" Width="100"/>
+                                <DataGridTextColumn Header="Status" Binding="{Binding StatusCurent}" Width="90"/>
+                                <DataGridTextColumn Header="Atestate" Binding="{Binding Atestate}" Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
+                </Border>
+            </Grid>
+
         </Grid>
     </Grid>
 </Window>
