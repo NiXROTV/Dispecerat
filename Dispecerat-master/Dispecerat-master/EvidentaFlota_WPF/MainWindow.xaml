@@ -214,6 +214,41 @@
                                                      Path=Items.Count,
                                                      StringFormat='Număr camioane: {0}'}"
                                    FontWeight="Bold" Foreground="#2980B9" Margin="0"/>
+                            <!-- Cautare dupa numar inmatriculare -->
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="txtCautareNrCamion"
+                                         Grid.Column="0"
+                                         Tag="🔍  Caută după nr. înmatriculare..."
+                                         Padding="8,6"
+                                         TextChanged="TxtCautareNrCamion_TextChanged">
+                                    <TextBox.Style>
+                                        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                            <Style.Triggers>
+                                                <Trigger Property="Text" Value="">
+                                                    <Setter Property="Background">
+                                                        <Setter.Value>
+                                                            <VisualBrush Stretch="None" AlignmentX="Left">
+                                                                <VisualBrush.Visual>
+                                                                    <TextBlock Text="🔍  Caută după nr. înmatriculare..." Foreground="#6B7280" Margin="8,0" VerticalAlignment="Center"/>
+                                                                </VisualBrush.Visual>
+                                                            </VisualBrush>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBox.Style>
+                                </TextBox>
+                                <Button Grid.Column="2" Content="✕" Width="32" Height="32"
+                                        Margin="0" ToolTip="Resetează căutarea"
+                                        Click="BtnResetCautareCamion_Click"
+                                        Background="#4C4C7A"/>
+                            </Grid>
                         </StackPanel>
                         <DataGrid x:Name="dgCamioane" DockPanel.Dock="Top">
                             <DataGrid.Columns>
@@ -381,6 +416,40 @@
                                                      Path=Items.Count,
                                                      StringFormat='Număr șoferi: {0}'}"
                                    FontWeight="Bold" Foreground="#8E44AD" Margin="0"/>
+                            <!-- Cautare dupa ID client (ID Angajat) -->
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="txtCautareIdSofer"
+                                         Grid.Column="0"
+                                         Padding="8,6"
+                                         TextChanged="TxtCautareIdSofer_TextChanged">
+                                    <TextBox.Style>
+                                        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                            <Style.Triggers>
+                                                <Trigger Property="Text" Value="">
+                                                    <Setter Property="Background">
+                                                        <Setter.Value>
+                                                            <VisualBrush Stretch="None" AlignmentX="Left">
+                                                                <VisualBrush.Visual>
+                                                                    <TextBlock Text="🔍  Caută după ID angajat..." Foreground="#6B7280" Margin="8,0" VerticalAlignment="Center"/>
+                                                                </VisualBrush.Visual>
+                                                            </VisualBrush>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBox.Style>
+                                </TextBox>
+                                <Button Grid.Column="2" Content="✕" Width="32" Height="32"
+                                        Margin="0" ToolTip="Resetează căutarea"
+                                        Click="BtnResetCautareSofer_Click"
+                                        Background="#4C4C7A"/>
+                            </Grid>
                         </StackPanel>
                         <DataGrid x:Name="dgSoferi" DockPanel.Dock="Top"
                                   SelectionChanged="DgSoferi_SelectionChanged">
@@ -476,6 +545,64 @@
                                                      Path=Items.Count,
                                                      StringFormat='Număr curse: {0}'}"
                                    FontWeight="Bold" Foreground="#F59E0B" Margin="0"/>
+                            <!-- Cautare curse dupa ID sofer (client) sau nr. inmatriculare -->
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="txtCautareIdSoferCursa"
+                                         Grid.Column="0"
+                                         Padding="8,6"
+                                         TextChanged="TxtCautareCursa_TextChanged">
+                                    <TextBox.Style>
+                                        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                            <Style.Triggers>
+                                                <Trigger Property="Text" Value="">
+                                                    <Setter Property="Background">
+                                                        <Setter.Value>
+                                                            <VisualBrush Stretch="None" AlignmentX="Left">
+                                                                <VisualBrush.Visual>
+                                                                    <TextBlock Text="🔍 ID șofer..." Foreground="#6B7280" Margin="8,0" VerticalAlignment="Center"/>
+                                                                </VisualBrush.Visual>
+                                                            </VisualBrush>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBox.Style>
+                                </TextBox>
+                                <TextBox x:Name="txtCautareNrCursa"
+                                         Grid.Column="2"
+                                         Padding="8,6"
+                                         TextChanged="TxtCautareCursa_TextChanged">
+                                    <TextBox.Style>
+                                        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                            <Style.Triggers>
+                                                <Trigger Property="Text" Value="">
+                                                    <Setter Property="Background">
+                                                        <Setter.Value>
+                                                            <VisualBrush Stretch="None" AlignmentX="Left">
+                                                                <VisualBrush.Visual>
+                                                                    <TextBlock Text="🔍 Nr. înmatriculare..." Foreground="#6B7280" Margin="8,0" VerticalAlignment="Center"/>
+                                                                </VisualBrush.Visual>
+                                                            </VisualBrush>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBox.Style>
+                                </TextBox>
+                                <Button Grid.Column="4" Content="✕" Width="32" Height="32"
+                                        Margin="0" ToolTip="Resetează căutarea"
+                                        Click="BtnResetCautareCursa_Click"
+                                        Background="#4C4C7A"/>
+                            </Grid>
                         </StackPanel>
                         <DataGrid x:Name="dgCurse" DockPanel.Dock="Top"
                                   SelectionChanged="DgCurse_SelectionChanged">

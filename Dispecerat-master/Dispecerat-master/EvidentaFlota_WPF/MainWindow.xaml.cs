@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -419,6 +420,91 @@ namespace EvidentaFlota_WPF
 
         private void MenuItemIesire_Click(object sender, RoutedEventArgs e)
             => Application.Current.Shutdown();
+
+        // ──────────────────────────────────────────────────────────────────────
+        //  CĂUTARE — CAMIOANE (după Nr. Înmatriculare)
+        // ──────────────────────────────────────────────────────────────────────
+
+        private void TxtCautareNrCamion_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string filtru = txtCautareNrCamion.Text.Trim();
+            if (string.IsNullOrEmpty(filtru))
+            {
+                dgCamioane.ItemsSource = colectieCamioane;
+            }
+            else
+            {
+                var rezultate = colectieCamioane
+                    .Where(c => c.NumarInmatriculare.IndexOf(filtru, StringComparison.OrdinalIgnoreCase) >= 0)
+                    .ToList();
+                dgCamioane.ItemsSource = rezultate;
+            }
+        }
+
+        private void BtnResetCautareCamion_Click(object sender, RoutedEventArgs e)
+        {
+            txtCautareNrCamion.Text = string.Empty;
+            dgCamioane.ItemsSource = colectieCamioane;
+        }
+
+        // ──────────────────────────────────────────────────────────────────────
+        //  CĂUTARE — ȘOFERI (după ID Angajat)
+        // ──────────────────────────────────────────────────────────────────────
+
+        private void TxtCautareIdSofer_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string filtru = txtCautareIdSofer.Text.Trim();
+            if (string.IsNullOrEmpty(filtru))
+            {
+                dgSoferi.ItemsSource = colectieSoferi;
+            }
+            else
+            {
+                var rezultate = colectieSoferi
+                    .Where(s => s.IdAngajat.IndexOf(filtru, StringComparison.OrdinalIgnoreCase) >= 0
+                             || s.Nume.IndexOf(filtru, StringComparison.OrdinalIgnoreCase) >= 0
+                             || s.Prenume.IndexOf(filtru, StringComparison.OrdinalIgnoreCase) >= 0)
+                    .ToList();
+                dgSoferi.ItemsSource = rezultate;
+            }
+        }
+
+        private void BtnResetCautareSofer_Click(object sender, RoutedEventArgs e)
+        {
+            txtCautareIdSofer.Text = string.Empty;
+            dgSoferi.ItemsSource = colectieSoferi;
+        }
+
+        // ──────────────────────────────────────────────────────────────────────
+        //  CĂUTARE — CURSE (după ID Șofer/Client SAU Nr. Înmatriculare Camion)
+        // ──────────────────────────────────────────────────────────────────────
+
+        private void TxtCautareCursa_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string filtruSofer = txtCautareIdSoferCursa.Text.Trim();
+            string filtruNr    = txtCautareNrCursa.Text.Trim();
+
+            IEnumerable<Cursa> rezultate = colectieCurse;
+
+            if (!string.IsNullOrEmpty(filtruSofer))
+                rezultate = rezultate.Where(c =>
+                    c.SoferAlocat.IdAngajat.IndexOf(filtruSofer, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    c.SoferAlocat.Nume.IndexOf(filtruSofer, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    c.SoferAlocat.Prenume.IndexOf(filtruSofer, StringComparison.OrdinalIgnoreCase) >= 0);
+
+            if (!string.IsNullOrEmpty(filtruNr))
+                rezultate = rezultate.Where(c =>
+                    c.CamionAlocat.NumarInmatriculare.IndexOf(filtruNr, StringComparison.OrdinalIgnoreCase) >= 0);
+
+            dgCurse.ItemsSource = rezultate.ToList();
+        }
+
+        private void BtnResetCautareCursa_Click(object sender, RoutedEventArgs e)
+        {
+            txtCautareIdSoferCursa.Text = string.Empty;
+            txtCautareNrCursa.Text = string.Empty;
+            dgCurse.ItemsSource = colectieCurse;
+        }
 
         // ──────────────────────────────────────────────────────────────────────
         //  PANEL 4 — GESTIONARE CURSE
