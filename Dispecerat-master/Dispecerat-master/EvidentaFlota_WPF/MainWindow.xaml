@@ -132,6 +132,9 @@
             <MenuItem Header="_Șoferi">
                 <MenuItem Header="_Gestionare Șoferi" Click="MenuItemSoferi_Click"/>
             </MenuItem>
+            <MenuItem Header="_Curse">
+                <MenuItem Header="_Gestionare Curse" Click="MenuItemCurse_Click"/>
+            </MenuItem>
             <MenuItem Header="_Ajutor">
                 <MenuItem Header="_Despre" Click="MenuItemDespre_Click"/>
             </MenuItem>
@@ -207,11 +210,6 @@
                         <StackPanel DockPanel.Dock="Top" Margin="0,0,0,10">
                             <TextBlock Text="Listă Camioane" FontSize="17" FontWeight="Bold"
                                        Foreground="#F1F5F9" Margin="0,0,0,6"/>
-                            <!--
-                                BINDING ElementName: sursa este DataGrid-ul dgCamioane (alt control, NU model/view-model).
-                                Path=Items.Count navigheaza prin proprietatile controlului sursa.
-                                StringFormat aplica formatul textului afisat.
-                            -->
                             <Label Content="{Binding ElementName=dgCamioane,
                                                      Path=Items.Count,
                                                      StringFormat='Număr camioane: {0}'}"
@@ -248,11 +246,6 @@
                         <TextBlock Text="Modificare Camion" FontSize="17" FontWeight="Bold"
                                    Foreground="#F1F5F9" Margin="0,0,0,12"/>
                         <Label Content="Selectează Camionul:"/>
-                        <!--
-                            ComboBox populat cu lista camioanelor.
-                            La selectie, DataContext-ul panoului din dreapta
-                            este setat pe obiectul Camion selectat.
-                        -->
                         <ComboBox x:Name="cmbCamioane"
                                   DisplayMemberPath="NumarInmatriculare"
                                   SelectionChanged="CmbCamioane_SelectionChanged"/>
@@ -267,12 +260,6 @@
                     </StackPanel>
                 </Border>
 
-                <!--
-                    Panoul de editare cu DataContext setat din code-behind
-                    pe camionul selectat. Toate binding-urile de mai jos
-                    sunt TwoWay — modificarile din UI actualizeaza direct
-                    proprietatile obiectului Camion (posibil datorita INotifyPropertyChanged).
-                -->
                 <Border x:Name="borderDetaliiMod" Grid.Column="2" Background="White"
                         CornerRadius="10" Padding="14">
                     <Border.Effect><DropShadowEffect BlurRadius="18" Opacity="0.5" ShadowDepth="4" Color="#000000"/></Border.Effect>
@@ -282,16 +269,10 @@
                                        Foreground="#F1F5F9" Margin="0,0,0,10"/>
 
                             <Label Content="Număr Înmatriculare (read-only):"/>
-                            <!-- Binding OneWay pentru afisare numar (nu se poate modifica) -->
                             <TextBox Text="{Binding NumarInmatriculare, Mode=OneWay}"
                                      IsReadOnly="True" Background="#ECF0F1"/>
 
                             <Label x:Name="lblModMarca" Content="Marcă:"/>
-                            <!--
-                                BINDING TwoWay: modificarile in TextBox actualizeaza
-                                imediat proprietatea Marca a obiectului Camion selectat.
-                                UpdateSourceTrigger=PropertyChanged — actualizare la fiecare tastare.
-                            -->
                             <TextBox Text="{Binding Marca, Mode=TwoWay,
                                                     UpdateSourceTrigger=PropertyChanged}"/>
 
@@ -301,21 +282,12 @@
                                                     StringFormat='{}{0:F2}'}"/>
 
                             <Label Content="Data Înregistrării:"/>
-                            <!-- BINDING TwoWay pe DatePicker pentru DataInregistrarii -->
                             <DatePicker SelectedDate="{Binding DataInregistrarii, Mode=TwoWay}"/>
 
-                            <!--
-                                BINDING TwoWay pe ComboBox pentru TipContract (FormaFinantare echivalent).
-                                ItemsSource setat din code-behind cu Camion.ValoriTipContract.
-                            -->
                             <Label Content="Tip Contract:"/>
                             <ComboBox x:Name="cmbModTipContract"
                                       SelectedItem="{Binding TipContract, Mode=TwoWay}"/>
 
-                            <!--
-                                BINDING TwoWay pe ComboBox pentru StatusCurent (ProgramStudiu echivalent).
-                                ItemsSource setat din code-behind cu valorile enum-ului StatusCamion.
-                            -->
                             <Label Content="Status Curent:"/>
                             <ComboBox x:Name="cmbModStatus"
                                       SelectedItem="{Binding StatusCurent, Mode=TwoWay}"/>
@@ -332,7 +304,6 @@
 
                             <TextBlock Text="Ultima Actualizare:" FontWeight="Bold"
                                        Foreground="#7F8C8D" Margin="0,4,0,2"/>
-                            <!-- Binding OneWay pentru afisare DataActualizarii -->
                             <TextBlock Text="{Binding DataActualizarii,
                                                       StringFormat='dd/MM/yyyy HH:mm',
                                                       Mode=OneWay}"
@@ -343,7 +314,7 @@
             </Grid>
 
             <!-- ══════════════════════════════════════════════
-                 PANEL 3: CRUD ȘOFERI cu Binding (Temă acasă)
+                 PANEL 3: CRUD ȘOFERI
                  ══════════════════════════════════════════════ -->
             <Grid x:Name="panelSoferi" Visibility="Collapsed">
                 <Grid.ColumnDefinitions>
@@ -352,7 +323,6 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Form Sofer -->
                 <Border Grid.Column="0" Background="#2A2A3E" CornerRadius="12" Padding="16">
                     <Border.Effect><DropShadowEffect BlurRadius="18" Opacity="0.5" ShadowDepth="4" Color="#000000"/></Border.Effect>
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -367,18 +337,10 @@
                             <TextBox x:Name="txtSoferNume"/>
 
                             <Label x:Name="lblSoferPrenume" Content="Prenume:"/>
-                            <!--
-                                BINDING 1 (Sofer panel): TwoWay pe TextBox Prenume.
-                                DataContext setat pe soferul selectat din DataGrid.
-                            -->
                             <TextBox x:Name="txtSoferPrenume"
                                      Text="{Binding Prenume, Mode=TwoWay,
                                                     UpdateSourceTrigger=PropertyChanged}"/>
 
-                            <!--
-                                BINDING 2 (Sofer panel): TwoWay pe ComboBox StatusSofer.
-                                ItemsSource setat din code-behind cu enum-ul StatusSofer.
-                            -->
                             <Label Content="Status:"/>
                             <ComboBox x:Name="cmbSoferStatus"
                                       SelectedItem="{Binding StatusCurent, Mode=TwoWay}"/>
@@ -409,14 +371,12 @@
                     </ScrollViewer>
                 </Border>
 
-                <!-- DataGrid Soferi -->
                 <Border Grid.Column="2" Background="#2A2A3E" CornerRadius="12" Padding="16">
                     <Border.Effect><DropShadowEffect BlurRadius="18" Opacity="0.5" ShadowDepth="4" Color="#000000"/></Border.Effect>
                     <DockPanel>
                         <StackPanel DockPanel.Dock="Top" Margin="0,0,0,10">
                             <TextBlock Text="Listă Șoferi" FontSize="17" FontWeight="Bold"
                                        Foreground="#F1F5F9" Margin="0,0,0,6"/>
-                            <!-- Binding ElementName pentru afisarea numarului de soferi -->
                             <Label Content="{Binding ElementName=dgSoferi,
                                                      Path=Items.Count,
                                                      StringFormat='Număr șoferi: {0}'}"
@@ -430,6 +390,104 @@
                                 <DataGridTextColumn Header="Prenume" Binding="{Binding Prenume}" Width="100"/>
                                 <DataGridTextColumn Header="Status" Binding="{Binding StatusCurent}" Width="90"/>
                                 <DataGridTextColumn Header="Atestate" Binding="{Binding Atestate}" Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
+                </Border>
+            </Grid>
+
+            <!-- ══════════════════════════════════════════════
+                 PANEL 4: GESTIONARE CURSE
+                 ══════════════════════════════════════════════ -->
+            <Grid x:Name="panelCurse" Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="340" MinWidth="260"/>
+                    <ColumnDefinition Width="15"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Form creare cursa -->
+                <Border Grid.Column="0" Background="#2A2A3E" CornerRadius="12" Padding="16">
+                    <Border.Effect><DropShadowEffect BlurRadius="18" Opacity="0.5" ShadowDepth="4" Color="#000000"/></Border.Effect>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <TextBlock Text="Gestionare Curse" FontSize="17" FontWeight="Bold"
+                                       Foreground="#F1F5F9" Margin="0,0,0,12"/>
+
+                            <Label x:Name="lblCursaPlecare" Content="Punct Plecare:"/>
+                            <TextBox x:Name="txtCursaPlecare"/>
+
+                            <Label x:Name="lblCursaDestinatie" Content="Destinație:"/>
+                            <TextBox x:Name="txtCursaDestinatie"/>
+
+                            <Label x:Name="lblCursaDistanta" Content="Distanță (km):"/>
+                            <TextBox x:Name="txtCursaDistanta"/>
+
+                            <Label Content="ETA (ex: 2h30m):"/>
+                            <TextBox x:Name="txtCursaETA"/>
+
+                            <Label x:Name="lblCursaPret" Content="Preț (RON):"/>
+                            <TextBox x:Name="txtCursaPret"/>
+
+                            <Label x:Name="lblCursaCamion" Content="Camion Alocat:"/>
+                            <ComboBox x:Name="cmbCursaCamion"
+                                      DisplayMemberPath="NumarInmatriculare"/>
+
+                            <Label x:Name="lblCursaSofer" Content="Șofer Alocat:"/>
+                            <ComboBox x:Name="cmbCursaSofer"
+                                      DisplayMemberPath="IdAngajat"/>
+
+                            <GroupBox Header="Cerințe Marfă">
+                                <StackPanel Margin="4">
+                                    <CheckBox x:Name="chkCursaFragil" Content="Fragil" Margin="0,2"/>
+                                    <CheckBox x:Name="chkCursaADR" Content="Periculos ADR" Margin="0,2"/>
+                                    <CheckBox x:Name="chkCursaTemp" Content="Sensibil Temperatură" Margin="0,2"/>
+                                    <CheckBox x:Name="chkCursaAnimale" Content="Animale Vii" Margin="0,2"/>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <TextBlock x:Name="lblMesajCursa" TextWrapping="Wrap"
+                                       Margin="0,4" FontWeight="SemiBold"/>
+
+                            <Button Content="➕  Adaugă Cursă" Click="BtnAdaugaCursa_Click"/>
+
+                            <Separator Margin="0,8" Background="#4C4C7A"/>
+                            <TextBlock Text="Acțiuni pe Cursa Selectată" FontSize="12"
+                                       FontWeight="SemiBold" Foreground="#A78BFA" Margin="0,0,0,6"/>
+
+                            <Button Content="▶  Începe Cursa" Click="BtnIncepeCursa_Click"
+                                    Background="#2563EB"/>
+                            <Button Content="✔  Finalizează Cursa" Click="BtnFinalizeazaCursa_Click"
+                                    Background="#16A34A" Margin="0,4"/>
+                            <Button Content="✖  Anulează Cursa" Click="BtnAnuleazaCursa_Click"
+                                    Background="#DC2626" Margin="0,4"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+
+                <!-- DataGrid Curse -->
+                <Border Grid.Column="2" Background="#2A2A3E" CornerRadius="12" Padding="16">
+                    <Border.Effect><DropShadowEffect BlurRadius="18" Opacity="0.5" ShadowDepth="4" Color="#000000"/></Border.Effect>
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+                            <TextBlock Text="Listă Curse" FontSize="17" FontWeight="Bold"
+                                       Foreground="#F1F5F9" Margin="0,0,0,6"/>
+                            <Label Content="{Binding ElementName=dgCurse,
+                                                     Path=Items.Count,
+                                                     StringFormat='Număr curse: {0}'}"
+                                   FontWeight="Bold" Foreground="#F59E0B" Margin="0"/>
+                        </StackPanel>
+                        <DataGrid x:Name="dgCurse" DockPanel.Dock="Top"
+                                  SelectionChanged="DgCurse_SelectionChanged">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Plecare" Binding="{Binding PunctPlecare}" Width="100"/>
+                                <DataGridTextColumn Header="Destinație" Binding="{Binding Destinatie}" Width="100"/>
+                                <DataGridTextColumn Header="Km" Binding="{Binding DistantaKm}" Width="55"/>
+                                <DataGridTextColumn Header="ETA" Binding="{Binding ETA}" Width="65"/>
+                                <DataGridTextColumn Header="Preț" Binding="{Binding Pret, StringFormat='{}{0:N0} RON'}" Width="80"/>
+                                <DataGridTextColumn Header="Camion" Binding="{Binding CamionAlocat.NumarInmatriculare}" Width="90"/>
+                                <DataGridTextColumn Header="Șofer" Binding="{Binding SoferAlocat.IdAngajat}" Width="70"/>
+                                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*"/>
                             </DataGrid.Columns>
                         </DataGrid>
                     </DockPanel>

@@ -20,16 +20,19 @@ namespace EvidentaFlota_WPF
         // ─── Persistenta ───────────────────────────────────────────────────────
         private readonly AdministrareCamioaneFisierText adminCamioane = new();
         private readonly AdministrareSoferiFisierText adminSoferi = new();
+        private readonly AdministrareCurseMemorie adminCurse = new();
 
         // ─── ObservableCollection-uri legate la DataGrid-uri ───────────────────
         // ObservableCollection notifica automat DataGrid-ul la Add/Remove,
         // fara a fi nevoie de refresh manual al ItemsSource.
         private readonly ObservableCollection<Camion> colectieCamioane = new();
         private readonly ObservableCollection<Sofer> colectieSoferi = new();
+        private readonly ObservableCollection<Cursa> colectieCurse = new();
 
         // ─── Referinta la entitatea selectata curent ───────────────────────────
         private Camion? camionCurent;
         private Sofer? soferCurent;
+        private Cursa? cursaCurenta;
 
         public MainWindow()
         {
@@ -47,6 +50,7 @@ namespace EvidentaFlota_WPF
             // ── DataGrid-uri legate la ObservableCollection ──
             dgCamioane.ItemsSource = colectieCamioane;
             dgSoferi.ItemsSource = colectieSoferi;
+            dgCurse.ItemsSource = colectieCurse;
 
             // ── ListBox TipContract (adaugare) ──
             lstTipContract.ItemsSource = Camion.ValoriTipContract;
@@ -85,6 +89,7 @@ namespace EvidentaFlota_WPF
             paneluAdaugare.Visibility = Visibility.Collapsed;
             panelModificare.Visibility = Visibility.Collapsed;
             panelSoferi.Visibility = Visibility.Collapsed;
+            panelCurse.Visibility = Visibility.Collapsed;
             panel.Visibility = Visibility.Visible;
         }
 
@@ -106,6 +111,17 @@ namespace EvidentaFlota_WPF
         {
             CuratareFormSofer();
             AfiseazaPanel(panelSoferi);
+        }
+
+        private void MenuItemCurse_Click(object sender, RoutedEventArgs e)
+        {
+            // Reîncarcă ComboBox-urile cu datele actuale
+            cmbCursaCamion.ItemsSource = null;
+            cmbCursaCamion.ItemsSource = colectieCamioane;
+            cmbCursaSofer.ItemsSource = null;
+            cmbCursaSofer.ItemsSource = colectieSoferi;
+            CuratareFormCursa();
+            AfiseazaPanel(panelCurse);
         }
 
         // ──────────────────────────────────────────────────────────────────────
@@ -194,10 +210,10 @@ namespace EvidentaFlota_WPF
                 bool sel = item.Tag?.ToString() switch
                 {
                     "AerConditionat" => camionCurent.Dotari.HasFlag(DotariCamion.AerConditionat),
-                    "Navigatie"      => camionCurent.Dotari.HasFlag(DotariCamion.Navigatie),
-                    "SistemFrig"     => camionCurent.Dotari.HasFlag(DotariCamion.SistemFrig),
-                    "Dormitor"       => camionCurent.Dotari.HasFlag(DotariCamion.Dormitor),
-                    _                => false
+                    "Navigatie" => camionCurent.Dotari.HasFlag(DotariCamion.Navigatie),
+                    "SistemFrig" => camionCurent.Dotari.HasFlag(DotariCamion.SistemFrig),
+                    "Dormitor" => camionCurent.Dotari.HasFlag(DotariCamion.Dormitor),
+                    _ => false
                 };
                 if (sel) lstModDotari.SelectedItems.Add(item);
             }
@@ -236,10 +252,10 @@ namespace EvidentaFlota_WPF
                 dotariNoi |= item.Tag?.ToString() switch
                 {
                     "AerConditionat" => DotariCamion.AerConditionat,
-                    "Navigatie"      => DotariCamion.Navigatie,
-                    "SistemFrig"     => DotariCamion.SistemFrig,
-                    "Dormitor"       => DotariCamion.Dormitor,
-                    _                => DotariCamion.Niciuna
+                    "Navigatie" => DotariCamion.Navigatie,
+                    "SistemFrig" => DotariCamion.SistemFrig,
+                    "Dormitor" => DotariCamion.Dormitor,
+                    _ => DotariCamion.Niciuna
                 };
             }
             camionCurent.Dotari = dotariNoi;
@@ -275,8 +291,8 @@ namespace EvidentaFlota_WPF
             txtSoferNume.Text = soferCurent.Nume;
             // txtSoferPrenume si cmbSoferStatus — populate via binding
 
-            chkMarfaGen.IsChecked   = soferCurent.Atestate.HasFlag(AtestateSofer.MarfaGenerala);
-            chkADR.IsChecked        = soferCurent.Atestate.HasFlag(AtestateSofer.ADR);
+            chkMarfaGen.IsChecked = soferCurent.Atestate.HasFlag(AtestateSofer.MarfaGenerala);
+            chkADR.IsChecked = soferCurent.Atestate.HasFlag(AtestateSofer.ADR);
             chkAgabaritic.IsChecked = soferCurent.Atestate.HasFlag(AtestateSofer.Agabaritic);
             chkFrigorific.IsChecked = soferCurent.Atestate.HasFlag(AtestateSofer.Frigorific);
 
@@ -287,14 +303,14 @@ namespace EvidentaFlota_WPF
         {
             lblMesajSofer.Text = string.Empty;
 
-            string id     = txtSoferId.Text.Trim();
-            string nume   = txtSoferNume.Text.Trim();
-            string pren   = txtSoferPrenume.Text.Trim();
+            string id = txtSoferId.Text.Trim();
+            string nume = txtSoferNume.Text.Trim();
+            string pren = txtSoferPrenume.Text.Trim();
 
             if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(nume) || string.IsNullOrEmpty(pren))
             {
                 lblMesajSofer.Foreground = Brushes.Red;
-                lblSoferNume.Foreground  = string.IsNullOrEmpty(nume) ? Brushes.Red : Brushes.DimGray;
+                lblSoferNume.Foreground = string.IsNullOrEmpty(nume) ? Brushes.Red : Brushes.DimGray;
                 lblSoferPrenume.Foreground = string.IsNullOrEmpty(pren) ? Brushes.Red : Brushes.DimGray;
                 lblMesajSofer.Text = "ID, Nume și Prenume sunt obligatorii!";
                 return;
@@ -329,7 +345,7 @@ namespace EvidentaFlota_WPF
 
             // Prenume si StatusCurent sunt deja actualizate prin TwoWay binding.
             // Actualizam Nume si Atestate manual.
-            soferCurent.Nume    = txtSoferNume.Text.Trim();
+            soferCurent.Nume = txtSoferNume.Text.Trim();
             soferCurent.Atestate = CitesteAtestate();
 
             adminSoferi.UpdateSofer(soferCurent);
@@ -365,8 +381,8 @@ namespace EvidentaFlota_WPF
         private AtestateSofer CitesteAtestate()
         {
             AtestateSofer a = AtestateSofer.Niciunul;
-            if (chkMarfaGen.IsChecked == true)   a |= AtestateSofer.MarfaGenerala;
-            if (chkADR.IsChecked == true)        a |= AtestateSofer.ADR;
+            if (chkMarfaGen.IsChecked == true) a |= AtestateSofer.MarfaGenerala;
+            if (chkADR.IsChecked == true) a |= AtestateSofer.ADR;
             if (chkAgabaritic.IsChecked == true) a |= AtestateSofer.Agabaritic;
             if (chkFrigorific.IsChecked == true) a |= AtestateSofer.Frigorific;
             return a;
@@ -403,6 +419,178 @@ namespace EvidentaFlota_WPF
 
         private void MenuItemIesire_Click(object sender, RoutedEventArgs e)
             => Application.Current.Shutdown();
+
+        // ──────────────────────────────────────────────────────────────────────
+        //  PANEL 4 — GESTIONARE CURSE
+        // ──────────────────────────────────────────────────────────────────────
+
+        private void DgCurse_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            cursaCurenta = dgCurse.SelectedItem as Cursa;
+            lblMesajCursa.Text = string.Empty;
+        }
+
+        private void BtnAdaugaCursa_Click(object sender, RoutedEventArgs e)
+        {
+            ResetareCuloriCursa();
+            lblMesajCursa.Text = string.Empty;
+
+            string plecare = txtCursaPlecare.Text.Trim();
+            string dest = txtCursaDestinatie.Text.Trim();
+            string eta = txtCursaETA.Text.Trim();
+            bool valid = true;
+            string erori = string.Empty;
+
+            if (string.IsNullOrEmpty(plecare))
+            {
+                valid = false; erori += "Punctul de plecare este obligatoriu!\n";
+                lblCursaPlecare.Foreground = Brushes.Red;
+            }
+            if (string.IsNullOrEmpty(dest))
+            {
+                valid = false; erori += "Destinația este obligatorie!\n";
+                lblCursaDestinatie.Foreground = Brushes.Red;
+            }
+            if (!double.TryParse(txtCursaDistanta.Text.Trim(), out double km) || km <= 0)
+            {
+                valid = false; erori += "Distanța trebuie să fie un număr pozitiv!\n";
+                lblCursaDistanta.Foreground = Brushes.Red;
+            }
+            if (!double.TryParse(txtCursaPret.Text.Trim(), out double pret) || pret < 0)
+            {
+                valid = false; erori += "Prețul trebuie să fie un număr pozitiv!\n";
+                lblCursaPret.Foreground = Brushes.Red;
+            }
+            if (cmbCursaCamion.SelectedItem is not Camion camion)
+            {
+                valid = false; erori += "Selectați un camion!\n";
+                lblCursaCamion.Foreground = Brushes.Red;
+            }
+            if (cmbCursaSofer.SelectedItem is not Sofer sofer)
+            {
+                valid = false; erori += "Selectați un șofer!\n";
+                lblCursaSofer.Foreground = Brushes.Red;
+            }
+
+            if (!valid)
+            {
+                lblMesajCursa.Foreground = Brushes.Red;
+                lblMesajCursa.Text = erori.TrimEnd('\n');
+                return;
+            }
+
+            // Scoatem variabilele din pattern matching ca să le folosim garantat non-null
+            var camionSel = (Camion)cmbCursaCamion.SelectedItem;
+            var soferSel = (Sofer)cmbCursaSofer.SelectedItem;
+
+            Cursa cursa = new(plecare, dest, km, eta, pret, camionSel, soferSel)
+            {
+                CerinteMarfa = CitesteCerinteMarfa()
+            };
+
+            colectieCurse.Add(cursa);
+            adminCurse.AddCursa(cursa);
+
+            lblMesajCursa.Foreground = Brushes.Green;
+            lblMesajCursa.Text = $"Cursă '{plecare} → {dest}' adăugată cu succes!";
+            CuratareFormCursa();
+        }
+
+        private void BtnIncepeCursa_Click(object sender, RoutedEventArgs e)
+        {
+            if (cursaCurenta == null)
+            {
+                lblMesajCursa.Foreground = Brushes.Red;
+                lblMesajCursa.Text = "Selectați o cursă din listă!";
+                return;
+            }
+            if (cursaCurenta.Status != StatusCursa.InAsteptare)
+            {
+                lblMesajCursa.Foreground = Brushes.Red;
+                lblMesajCursa.Text = "Doar cursele În Așteptare pot fi începute.";
+                return;
+            }
+            cursaCurenta.IncepeCursa();
+            // Refresh DataGrid
+            dgCurse.Items.Refresh();
+            lblMesajCursa.Foreground = Brushes.CornflowerBlue;
+            lblMesajCursa.Text = "Cursa a fost marcată ca În Desfășurare.";
+        }
+
+        private void BtnFinalizeazaCursa_Click(object sender, RoutedEventArgs e)
+        {
+            if (cursaCurenta == null)
+            {
+                lblMesajCursa.Foreground = Brushes.Red;
+                lblMesajCursa.Text = "Selectați o cursă din listă!";
+                return;
+            }
+            if (cursaCurenta.Status != StatusCursa.InDesfasurare)
+            {
+                lblMesajCursa.Foreground = Brushes.Red;
+                lblMesajCursa.Text = "Doar cursele În Desfășurare pot fi finalizate.";
+                return;
+            }
+            cursaCurenta.FinalizeazaCursa();
+            dgCurse.Items.Refresh();
+            lblMesajCursa.Foreground = Brushes.Green;
+            lblMesajCursa.Text = "Cursa a fost finalizată cu succes.";
+        }
+
+        private void BtnAnuleazaCursa_Click(object sender, RoutedEventArgs e)
+        {
+            if (cursaCurenta == null)
+            {
+                lblMesajCursa.Foreground = Brushes.Red;
+                lblMesajCursa.Text = "Selectați o cursă din listă!";
+                return;
+            }
+            if (cursaCurenta.Status == StatusCursa.Finalizata || cursaCurenta.Status == StatusCursa.Anulata)
+            {
+                lblMesajCursa.Foreground = Brushes.Red;
+                lblMesajCursa.Text = "Cursa este deja finalizată sau anulată.";
+                return;
+            }
+            if (MessageBox.Show("Anulați această cursă?", "Confirmare",
+                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                cursaCurenta.AnuleazaCursa();
+                dgCurse.Items.Refresh();
+                lblMesajCursa.Foreground = Brushes.OrangeRed;
+                lblMesajCursa.Text = "Cursa a fost anulată.";
+            }
+        }
+
+        private TipMarfa CitesteCerinteMarfa()
+        {
+            TipMarfa t = TipMarfa.Standard;
+            if (chkCursaFragil.IsChecked == true) t |= TipMarfa.Fragil;
+            if (chkCursaADR.IsChecked == true) t |= TipMarfa.PericulosADR;
+            if (chkCursaTemp.IsChecked == true) t |= TipMarfa.SensibilTemperatura;
+            if (chkCursaAnimale.IsChecked == true) t |= TipMarfa.AnimaleVii;
+            return t;
+        }
+
+        private void ResetareCuloriCursa()
+        {
+            var c = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#CBD5E1"));
+            lblCursaPlecare.Foreground = lblCursaDestinatie.Foreground =
+                lblCursaDistanta.Foreground = lblCursaPret.Foreground =
+                lblCursaCamion.Foreground = lblCursaSofer.Foreground = c;
+        }
+
+        private void CuratareFormCursa()
+        {
+            txtCursaPlecare.Text = txtCursaDestinatie.Text = txtCursaDistanta.Text =
+                txtCursaETA.Text = txtCursaPret.Text = string.Empty;
+            cmbCursaCamion.SelectedIndex = -1;
+            cmbCursaSofer.SelectedIndex = -1;
+            chkCursaFragil.IsChecked = chkCursaADR.IsChecked =
+                chkCursaTemp.IsChecked = chkCursaAnimale.IsChecked = false;
+            cursaCurenta = null;
+            dgCurse.SelectedItem = null;
+            ResetareCuloriCursa();
+        }
 
         private void MenuItemDespre_Click(object sender, RoutedEventArgs e)
             => MessageBox.Show(

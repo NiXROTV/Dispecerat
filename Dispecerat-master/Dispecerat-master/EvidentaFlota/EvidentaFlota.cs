@@ -217,7 +217,8 @@ namespace EvidentaFlota
                         }
                         break;
 
-                    case "0": ruleaza = false;
+                    case "0":
+                        ruleaza = false;
                         break;
                 }
             }
